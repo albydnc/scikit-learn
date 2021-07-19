@@ -94,6 +94,7 @@ def _smacof_single(dissimilarities, metric=True, n_components=2, init=None,
         X = init
 
     old_stress = None
+    stress_norm = None
     ir = IsotonicRegression()
     for it in range(max_iter):
         # Compute distance and monotonic regression
@@ -118,9 +119,11 @@ def _smacof_single(dissimilarities, metric=True, n_components=2, init=None,
         stress = ((dis.ravel() - disparities.ravel()) ** 2).sum() / 2
 
         # Use Stress-1
+        # name it stress_norm in order to minimize on non-normalized
+        # values
         if normalize:
-            stress = np.sqrt(stress /
-                             ((disparities.ravel() ** 2).sum() / 2))
+            stress_norm = np.sqrt(stress /
+                                  ((disparities.ravel() ** 2).sum() / 2))
 
         # Update X using the Guttman transform
         dis[dis == 0] = 1e-5
@@ -139,7 +142,9 @@ def _smacof_single(dissimilarities, metric=True, n_components=2, init=None,
                                                                        stress))
                 break
         old_stress = stress / dis
-
+    # return normalized stress as expected
+    if normalize:
+        stress = stress_norm
     return X, stress, it + 1
 
 
