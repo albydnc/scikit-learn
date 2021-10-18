@@ -575,6 +575,12 @@ class BaggingClassifier(ClassifierMixin, BaseBagging):
 
         .. versionadded:: 0.24
 
+    feature_names_in_ : ndarray of shape (`n_features_in_`,)
+        Names of features seen during :term:`fit`. Defined only when `X`
+        has feature names that are all strings.
+
+        .. versionadded:: 1.0
+
     estimators_ : list of estimators
         The collection of fitted base estimators.
 
@@ -998,6 +1004,12 @@ class BaggingRegressor(RegressorMixin, BaseBagging):
 
         .. versionadded:: 0.24
 
+    feature_names_in_ : ndarray of shape (`n_features_in_`,)
+        Names of features seen during :term:`fit`. Defined only when `X`
+        has feature names that are all strings.
+
+        .. versionadded:: 1.0
+
     estimators_ : list of estimators
         The collection of fitted sub-estimators.
 
@@ -1019,18 +1031,9 @@ class BaggingRegressor(RegressorMixin, BaseBagging):
         `oob_prediction_` might contain NaN. This attribute exists only
         when ``oob_score`` is True.
 
-    Examples
+    See Also
     --------
-    >>> from sklearn.svm import SVR
-    >>> from sklearn.ensemble import BaggingRegressor
-    >>> from sklearn.datasets import make_regression
-    >>> X, y = make_regression(n_samples=100, n_features=4,
-    ...                        n_informative=2, n_targets=1,
-    ...                        random_state=0, shuffle=False)
-    >>> regr = BaggingRegressor(base_estimator=SVR(),
-    ...                         n_estimators=10, random_state=0).fit(X, y)
-    >>> regr.predict([[0, 0, 0, 0]])
-    array([-2.8720...])
+    BaggingClassifier : A Bagging classifier.
 
     References
     ----------
@@ -1047,6 +1050,19 @@ class BaggingRegressor(RegressorMixin, BaseBagging):
 
     .. [4] G. Louppe and P. Geurts, "Ensembles on Random Patches", Machine
            Learning and Knowledge Discovery in Databases, 346-361, 2012.
+
+    Examples
+    --------
+    >>> from sklearn.svm import SVR
+    >>> from sklearn.ensemble import BaggingRegressor
+    >>> from sklearn.datasets import make_regression
+    >>> X, y = make_regression(n_samples=100, n_features=4,
+    ...                        n_informative=2, n_targets=1,
+    ...                        random_state=0, shuffle=False)
+    >>> regr = BaggingRegressor(base_estimator=SVR(),
+    ...                         n_estimators=10, random_state=0).fit(X, y)
+    >>> regr.predict([[0, 0, 0, 0]])
+    array([-2.8720...])
     """
 
     def __init__(

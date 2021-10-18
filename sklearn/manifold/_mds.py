@@ -53,7 +53,7 @@ def _smacof_single(dissimilarities, metric=True, n_components=2, init=None,
     random_state : int or RandomState instance, default=None
         Determines the random number generator used to initialize the centers.
         Pass an int for reproducible results across multiple function calls.
-        See :term: `Glossary <random_state>`.
+        See :term:`Glossary <random_state>`.
 
     normalize : boolean, optional, default: False
         Whether use and return normed stress value (Stress-1) instead of raw
@@ -148,11 +148,21 @@ def _smacof_single(dissimilarities, metric=True, n_components=2, init=None,
     return X, stress, it + 1
 
 
-@_deprecate_positional_args
-def smacof(dissimilarities, *, metric=True, n_components=2, init=None,
-           n_init=8, n_jobs=None, max_iter=300, verbose=0, eps=1e-3,
-           random_state=None, return_n_iter=False, normalize=False):
-    """Computes multidimensional scaling using the SMACOF algorithm.
+def smacof(
+    dissimilarities,
+    *,
+    metric=True,
+    n_components=2,
+    init=None,
+    n_init=8,
+    n_jobs=None,
+    max_iter=300,
+    verbose=0,
+    eps=1e-3,
+    random_state=None,
+    return_n_iter=False,
+):
+    """Compute multidimensional scaling using the SMACOF algorithm.
 
     The SMACOF (Scaling by MAjorizing a COmplicated Function) algorithm is a
     multidimensional scaling algorithm which minimizes an objective function
@@ -161,7 +171,8 @@ def smacof(dissimilarities, *, metric=True, n_components=2, init=None,
     stress, and is more powerful than traditional techniques such as gradient
     descent.
 
-    The SMACOF algorithm for metric MDS can summarized by the following steps:
+    The SMACOF algorithm for metric MDS can be summarized by the following
+    steps:
 
     1. Set an initial start configuration, randomly or not.
     2. Compute the stress
@@ -217,7 +228,7 @@ def smacof(dissimilarities, *, metric=True, n_components=2, init=None,
     random_state : int or RandomState instance, default=None
         Determines the random number generator used to initialize the centers.
         Pass an int for reproducible results across multiple function calls.
-        See :term: `Glossary <random_state>`.
+        See :term:`Glossary <random_state>`.
 
     return_n_iter : bool, default=False
         Whether or not to return the number of iterations.
@@ -340,7 +351,7 @@ class MDS(BaseEstimator):
     random_state : int or RandomState instance, default=None
         Determines the random number generator used to initialize the centers.
         Pass an int for reproducible results across multiple function calls.
-        See :term: `Glossary <random_state>`.
+        See :term:`Glossary <random_state>`.
 
     dissimilarity : {'euclidean', 'precomputed'}, default='euclidean'
         Dissimilarity measure to use:
@@ -376,20 +387,30 @@ class MDS(BaseEstimator):
         - or constructs a dissimilarity matrix from data using
           Euclidean distances.
 
+    n_features_in_ : int
+        Number of features seen during :term:`fit`.
+
+        .. versionadded:: 0.24
+
+    feature_names_in_ : ndarray of shape (`n_features_in_`,)
+        Names of features seen during :term:`fit`. Defined only when `X`
+        has feature names that are all strings.
+
+        .. versionadded:: 1.0
+
     n_iter_ : int
         The number of iterations corresponding to the best stress.
 
-    Examples
+    See Also
     --------
-    >>> from sklearn.datasets import load_digits
-    >>> from sklearn.manifold import MDS
-    >>> X, _ = load_digits(return_X_y=True)
-    >>> X.shape
-    (1797, 64)
-    >>> embedding = MDS(n_components=2)
-    >>> X_transformed = embedding.fit_transform(X[:100])
-    >>> X_transformed.shape
-    (100, 2)
+    sklearn.decomposition.PCA : Principal component analysis that is a linear
+        dimensionality reduction method.
+    sklearn.decomposition.KernelPCA : Non-linear dimensionality reduction using
+        kernels and PCA.
+    TSNE : T-distributed Stochastic Neighbor Embedding.
+    Isomap : Manifold learning based on Isometric Mapping.
+    LocallyLinearEmbedding : Manifold learning using Locally Linear Embedding.
+    SpectralEmbedding : Spectral embedding for non-linear dimensionality.
 
     References
     ----------
@@ -402,6 +423,17 @@ class MDS(BaseEstimator):
     "Multidimensional scaling by optimizing goodness of fit to a nonmetric
     hypothesis" Kruskal, J. Psychometrika, 29, (1964)
 
+    Examples
+    --------
+    >>> from sklearn.datasets import load_digits
+    >>> from sklearn.manifold import MDS
+    >>> X, _ = load_digits(return_X_y=True)
+    >>> X.shape
+    (1797, 64)
+    >>> embedding = MDS(n_components=2)
+    >>> X_transformed = embedding.fit_transform(X[:100])
+    >>> X_transformed.shape
+    (100, 2)
     """
     @_deprecate_positional_args
     def __init__(self, n_components=2, *, metric=True, n_init=4,
@@ -425,7 +457,7 @@ class MDS(BaseEstimator):
 
     def fit(self, X, y=None, init=None):
         """
-        Computes the position of the points in the embedding space.
+        Compute the position of the points in the embedding space.
 
         Parameters
         ----------
@@ -435,18 +467,24 @@ class MDS(BaseEstimator):
             be the dissimilarity matrix.
 
         y : Ignored
+            Not used, present for API consistency by convention.
 
         init : ndarray of shape (n_samples,), default=None
             Starting configuration of the embedding to initialize the SMACOF
             algorithm. By default, the algorithm is initialized with a randomly
             chosen array.
+
+        Returns
+        -------
+        self : object
+            Fitted estimator.
         """
         self.fit_transform(X, init=init)
         return self
 
     def fit_transform(self, X, y=None, init=None):
         """
-        Fit the data from X, and returns the embedded coordinates.
+        Fit the data from `X`, and returns the embedded coordinates.
 
         Parameters
         ----------
@@ -456,11 +494,17 @@ class MDS(BaseEstimator):
             be the dissimilarity matrix.
 
         y : Ignored
+            Not used, present for API consistency by convention.
 
         init : ndarray of shape (n_samples,), default=None
             Starting configuration of the embedding to initialize the SMACOF
             algorithm. By default, the algorithm is initialized with a randomly
             chosen array.
+
+        Returns
+        -------
+        X_new : ndarray of shape (n_samples, n_components)
+            X transformed in the new space.
         """
         X = self._validate_data(X)
         if X.shape[0] == X.shape[1] and self.dissimilarity != "precomputed":
